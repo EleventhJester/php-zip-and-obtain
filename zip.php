@@ -20,7 +20,7 @@ try {
 
             echo "Zip archive created successfully.";
 
-            // Move the zip archive to either the 'files-to-zip' or 'php-zip' directory
+            // Move the zip archive to either the 'files-to-zip' directory
             $targetDirectory = 'zip-or-obtain'; 
             $targetPath = $targetDirectory . '/' . $zipFileName;
 
