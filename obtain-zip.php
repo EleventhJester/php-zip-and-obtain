@@ -11,36 +11,37 @@ $pdfZipFileName = './zip-or-obtain/pdf-archive.zip';
 // Define the directory where the contents will be extracted
 $extractPath = './zip-or-obtain';
 
-try {
-    // Create a ZipArchive instance for the text zip file
-    $textZip = new ZipArchive();
-    if ($textZip->open($textZipFileName) === true) {
-        // Extract the contents of the text zip archive
-        if ($textZip->extractTo($extractPath)) {
-            $textZip->close();
-            echo "Text Zip archive extracted successfully to '$extractPath' directory.<br>";
+// /**
+//  * Extracts the contents of a given zip archive.
+//  *
+//  * @param string $zipFileName The path to the zip archive
+//  * @param string $extractPath The directory where contents will be extracted
+//  * @param string $message The success message to display
+//  * @return void
+//  */
+function extractZipArchive($zipFileName, $extractPath, $message) {
+    $zip = new ZipArchive();
+    if ($zip->open($zipFileName) === true) {
+        // Extract the contents of the zip archive
+        if ($zip->extractTo($extractPath)) {
+            $zip->close();
+            echo "$message extracted successfully to '$extractPath' directory. " . PHP_EOL;
         } else {
-            $textZip->close();
-            throw new Exception("Failed to extract text zip archive.");
+            $zip->close();
+            throw new Exception("Failed to extract zip archive.");
         }
     } else {
-        throw new Exception("Failed to open text zip archive.");
+        throw new Exception("Failed to open zip archive.");
     }
+}
 
-    // Create a ZipArchive instance for the PDF zip file
-    $pdfZip = new ZipArchive();
-    if ($pdfZip->open($pdfZipFileName) === true) {
-        // Extract the contents of the PDF zip archive
-        if ($pdfZip->extractTo($extractPath)) {
-            $pdfZip->close();
-            echo "PDF Zip archive extracted successfully to '$extractPath' directory.<br>";
-        } else {
-            $pdfZip->close();
-            throw new Exception("Failed to extract PDF zip archive.");
-        }
-    } else {
-        throw new Exception("Failed to open PDF zip archive.");
-    }
+try {
+    // Extract the text zip archive
+    extractZipArchive($textZipFileName, $extractPath, "Text Zip archive");
+
+    // Extract the PDF zip archive
+    extractZipArchive($pdfZipFileName, $extractPath, "PDF Zip archive");
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
+?>
