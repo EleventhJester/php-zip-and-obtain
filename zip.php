@@ -5,39 +5,42 @@ ini_set('display_errors', 1);
 ob_implicit_flush(true);
 
 $zip = new ZipArchive();
-$zipFileName = 'my-archive.zip';
 
-$sourceFilePath = 'files-to-zip/motivatie.txt'; // Relative path to the file
+$textZipFileName = './zip-or-obtain/text-archive.zip';
+$pdfZipFileName = './zip-or-obtain/pdf-archive.zip';
 
-// Read the file content with explicit encoding and line endings
-$fileContent = file_get_contents($sourceFilePath, false, null, 0, null);
-$fileContent = str_replace("\r\n", "\n", $fileContent); // Convert Windows line endings to Unix
+$sourceFilePath1 = './files-to-zip/motivatie.txt'; // Path to the text file
+$sourceFilePath2 = './files-to-zip/Curriculum-vitae.pdf';  // Path to the PDF file
 
 try {
-    if ($zip->open($zipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-        // Add the motivatie.txt file to the zip archive using LZMA compression
-        $archiveFilePath = 'motivatie.txt'; // This is the path within the archive
-
-        if ($zip->addFromString($archiveFilePath, $fileContent)) {
-            // Close the zip archive
-            $zip->close();
-
-            echo "Zip archive created successfully.";
-
-            // Move the zip archive to either the 'files-to-zip' directory
-            $targetDirectory = 'zip-or-obtain'; 
-            $targetPath = $targetDirectory . '/' . $zipFileName;
-
-            if (rename($zipFileName, $targetPath)) {
-                echo " Zip archive moved to '$targetDirectory' directory.";
-            } else {
-                throw new Exception("Failed to move zip archive to '$targetDirectory' directory.");
-            }
+    if ($zip->open($textZipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+        // Add the motivatie.txt file to the text zip archive
+        $archiveFilePath1 = 'motivatie.txt'; // This is the path within the archive
+        if ($zip->addFile($sourceFilePath1, $archiveFilePath1)) {
+            echo "Text file added to zip archive successfully." . PHP_EOL;
         } else {
-            throw new Exception("Failed to add file to zip archive.");
+            throw new Exception("Failed to add text file to zip archive.");
         }
+        $zip->close();
+        echo "Text zip archive created successfully." . PHP_EOL;
+        echo "Text zip archive saved as: $textZipFileName" . PHP_EOL;
     } else {
-        throw new Exception("Failed to create zip archive.");
+        throw new Exception("Failed to create text zip archive.");
+    }
+
+    if ($zip->open($pdfZipFileName, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+        // Add the PDF file to the PDF zip archive
+        $archiveFilePath2 = 'Curriculum-vitae.pdf'; // This is the path within the archive
+        if ($zip->addFile($sourceFilePath2, $archiveFilePath2)) {
+            echo "PDF file added to zip archive successfully." . PHP_EOL;
+        } else {
+            throw new Exception("Failed to add PDF file to zip archive.");
+        }
+        $zip->close();
+        echo "PDF zip archive created successfully." . PHP_EOL;
+        echo "PDF zip archive saved as: $pdfZipFileName" . PHP_EOL;
+    } else {
+        throw new Exception("Failed to create PDF zip archive.");
     }
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
